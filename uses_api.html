@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <title>Assignment API: Deliverables</title>
+  </head>
+  <body>
+    <h1>Stock Intraday Data</h1>
+    <div id="guess-input">
+        <label style="display: block; margin-top: 15px;">Please give a stock symbol: </label>
+        <br />
+        <input type="text" id="stock_symbol"/>
+        <button onclick="fetchStockData()">Get Data</button>
+    </div>
+    <div id="data-display" style="display: block; margin-top: 15px;"></div>
+    <script>
+        function fetchStockData() {
+            const symbol = document.getElementById('stock_symbol').value.toUpperCase();
+            const apiUrl = `https://api.stockdata.org/v1/data/intraday?symbols=${symbol}&api_token=VTpBqad2fRxAAgfPZq1Q70FdXHXp3VaQN4bTFwY7`
+
+            fetch(apiUrl).then(response => response.json()).then(data => {
+                // use if loop to check if data return
+                if (data.data && data.data.length > 0) {
+                    const stockData = data.data[0];
+                    const displayDiv = document.getElementById('data-display');
+                    
+                    const dataDate = stockData.date.substring(0, 10);
+
+                    displayDiv.innerHTML = `
+                        <h3>Data for ${symbol}</h3>
+                        <p>Date: ${dataDate}</p>
+                        <p>Open: $${stockData.data.open}</p>
+                        <p>Close: $${stockData.data.close}</p>
+                        <p>High: $${stockData.data.high}</p>
+                        <p>Low: $${stockData.data.low}</p>
+                        <p>Volume: ${stockData.data.volume}</p>
+                    `
+                } else {
+                    document.getElementById('data-display').innerHTML = `<p>No data available for ${symbol}. Please try a different symbol.</p>`;
+                }
+            })
+            .catch(error => {
+                console.log('Error fetching data:', error);
+                document.getElementById('data-display').innerHTML = `<p>Error retrieving data.</p>`;
+            })
+        }
+    </script>
+  </body>
+</html>
